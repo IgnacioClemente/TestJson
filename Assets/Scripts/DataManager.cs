@@ -6,11 +6,17 @@ using System.IO;
 public class DataManager : MonoBehaviour
 {
     public WeaponDataCollection WeaponDataCollection;
+    public string path = "weapons.json";
 
     string dataToSave;
+    string loadedData;
+    string dataPath;
+
+    private WeaponDataCollection loadedWeaponData;
 
     private void Awake()
     {
+        dataPath = Application.streamingAssetsPath + path;
         WeaponData espada = new WeaponData(5, 4, "Espada");
         WeaponData arco = new WeaponData(8, 1, "Arco");
         WeaponData daga = new WeaponData(3, 5, "Daga");
@@ -25,9 +31,27 @@ public class DataManager : MonoBehaviour
         SaveData();
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.L)) LoadData();    
+    }
+
     public void SaveData()
     {
-        if(!File.Exists(Application.streamingAssetsPath + "weapons.json"))
-            File.WriteAllText(Application.streamingAssetsPath + "weapons.json", dataToSave);
+        if(!File.Exists(dataPath))
+            File.WriteAllText(dataPath, dataToSave);
+    }
+
+    public void LoadData()
+    {
+        if (File.Exists(dataPath))
+        {
+            loadedWeaponData = JsonUtility.FromJson<WeaponDataCollection>(File.ReadAllText(dataPath));
+            Debug.Log("Existe ");
+            for (int i = 0; i < loadedWeaponData.WeaponData.Count; i++)
+            {
+                Debug.Log(loadedWeaponData.WeaponData[i].Nombre);
+            }
+        }
     }
 }
